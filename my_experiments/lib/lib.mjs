@@ -52,15 +52,15 @@ function createSVG(array, index1, index2) {
 
     // Define dimensions and margins
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
+    const width = 100;
+    const height = 100;
 
     // Create SVG element
-    const svg = d3n.createSVG(width + margin.left + margin.right, height + margin.top + margin.bottom);
+    const svg = d3n.createSVG(width, height);
 
     // Create a group element and apply margins
     const g = svg.append('g')
-        .attr('transform', `translate(${margin.left},${margin.top})`);
+        //.attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Set up scales
     const xExtent = d3.extent(data, d => d.x);
@@ -89,11 +89,11 @@ function createSVG(array, index1, index2) {
         .enter().append('circle')
         .attr('cx', d => xScale(d.x))
         .attr('cy', d => yScale(d.y))
-        .attr('r', 3)
+        .attr('r', 2)
         .style('fill', 'steelblue');
 
     // Define the output directory
-    const outputDir = '/home/maria/master-d3.js-with-25-projects-and-concepts/my_experiments/plots_store';
+    const outputDir = '/home/maria/master-d3.js-with-25-projects-and-concepts/my_experiments/my_experiments/plots_store';
 
     // Ensure the output directory exists
     if (!fs.existsSync(outputDir)) {
