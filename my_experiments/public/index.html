@@ -1,0 +1,56 @@
+<!-- public/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scatter Plot Grid</title>
+    <!-- Link to the favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <!-- Alternatively, for better compatibility -->
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scatter Plot Grid</h1>
+    <svg width="1000" height="1000"></svg> <!-- 20x20 grid with 50px cells -->
+
+    <script>
+        // Client-side JavaScript code to embed scatter plot SVGs
+
+        let canvas = d3.select("svg");
+
+        function getScatterPlotURL(index1, index2) {
+            return `/plots_store/scatter_${index1}_${index2}.svg`;
+        }
+
+        for (let i = 0; i < 20; i++) {
+            for (let j = 0; j < 20; j++) {
+                // Optional: Skip plotting if both indices are the same
+                if (i === j) continue;
+
+                // Define the position and size
+                let x = i * 50;
+                let y = j * 50;
+                let width = 50;
+                let height = 50;
+
+                // Append an image element referencing the scatter plot SVG
+                canvas.append("image")
+                    .attr("x", x)
+                    .attr("y", y)
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("href", getScatterPlotURL(i, j))
+                    .attr("preserveAspectRatio", "xMidYMid meet");
+            }
+        }
+    </script>
+</body>
+</html>

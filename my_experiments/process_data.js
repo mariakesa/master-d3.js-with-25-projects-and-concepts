@@ -23,3 +23,4 @@ const fs = require('fs');
         console.log('Shape of the array:', array.shape);
     });
 })();
+
