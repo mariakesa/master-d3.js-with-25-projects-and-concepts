@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scatter Plot Grid</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            border: 1px solid #ccc;
+        }
+
+        #image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        #image-modal div {
+            position: absolute;
+            pointer-events: none;
+            background-color: white; /* Solid white background */
+            padding: 10px; /* Optional: Add padding around the image */
+            border-radius: 5px; /* Optional: Add rounded corners */
+        }
+
+
+        #image-modal img {
+            pointer-events: none;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.2s ease;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Scatter Plot Grid</h1>
+    <svg width="1000" height="1000"></svg>
+
+    <!-- Modal Container -->
+    <div id="image-modal">
+        <div>
+            <img id="modal-image" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+       let canvas = d3.select("svg");
+
+function getScatterPlotURL(index1, index2) {
+    return `/plots_store/scatter_${index1}_${index2}.svg`;
+}
+
+function getScatterPlotLargeURL(index1, index2) {
+    return `/plots_store/scatter_bigger_${index1}_${index2}.svg`;
+}
+
+// Reference to the modal elements
+let imageModal = d3.select("#image-modal");
+let modalImage = d3.select("#modal-image");
+
+for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+        if (i === j) continue;
+
+        let x = i * 100;
+        let y = j * 100;
+        let width = 100;
+        let height = 100;
+
+        let smallHref = getScatterPlotURL(i, j);
+        let largeHref = getScatterPlotLargeURL(i, j);
+
+        let img = canvas.append("image")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("width", width)
+            .attr("height", height)
+            .attr("href", smallHref)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("data-index1", i)
+            .attr("data-index2", j);
+
+        // Event handlers
+        img.on("mouseover", function(event) {
+            let img = d3.select(this);
+            let index1 = img.attr("data-index1");
+            let index2 = img.attr("data-index2");
+
+            // Set the source of the modal image
+            modalImage.attr("src", getScatterPlotLargeURL(index1, index2));
+
+            // Position the modal near the image
+            let [mouseX, mouseY] = d3.pointer(event);
+
+            // Adjust position to prevent overflow
+            let modalWidth = 200;  // Desired modal image width
+            let modalHeight = 200; // Desired modal image height
+            let offsetX = 10;      // Offset from the cursor
+            let offsetY = 10;
+
+            let posX = mouseX + offsetX;
+            let posY = mouseY + offsetY;
+
+            if (posX + modalWidth > window.innerWidth) {
+                posX = mouseX - modalWidth - offsetX;
+            }
+            if (posY + modalHeight > window.innerHeight) {
+                posY = mouseY - modalHeight - offsetY;
+            }
+
+            imageModal.style("display", "block")
+                .style("position", "fixed")
+                .style("left", "0")
+                .style("top", "0")
+                .style("width", "100%")
+                .style("height", "100%")
+                .style("pointer-events", "none");
+
+            imageModal.select("div")
+                .style("position", "absolute")
+                .style("left", posX + "px")
+                .style("top", posY + "px")
+                .style("pointer-events", "none");
+
+            modalImage
+                .style("width", modalWidth + "px")
+                .style("height", modalHeight + "px")
+                .style("pointer-events", "none");
+        })
+        .on("mousemove", function(event) {
+            // Update the position as the mouse moves
+            let [mouseX, mouseY] = d3.pointer(event);
+
+            let modalWidth = parseInt(modalImage.style("width"));
+            let modalHeight = parseInt(modalImage.style("height"));
+            let offsetX = 10;
+            let offsetY = 10;
+
+            let posX = mouseX + offsetX;
+            let posY = mouseY + offsetY;
+
+            if (posX + modalWidth > window.innerWidth) {
+                posX = mouseX - modalWidth - offsetX;
+            }
+            if (posY + modalHeight > window.innerHeight) {
+                posY = mouseY - modalHeight - offsetY;
+            }
+
+            imageModal.select("div")
+                .style("left", posX + "px")
+                .style("top", posY + "px");
+        })
+        .on("mouseout", function(event) {
+            // Hide the modal
+            imageModal.style("display", "none");
+        });
+    }
+}
+
+    </script>
+</body>
+</html>

@@ -30,16 +30,16 @@
             return `/plots_store/scatter_${index1}_${index2}.svg`;
         }
 
-        for (let i = 0; i < 20; i++) {
-            for (let j = 0; j < 20; j++) {
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
                 // Optional: Skip plotting if both indices are the same
                 if (i === j) continue;
 
                 // Define the position and size
-                let x = i * 50;
-                let y = j * 50;
-                let width = 50;
-                let height = 50;
+                let x = i * 100;
+                let y = j * 100;
+                let width = 100;
+                let height = 100;
 
                 // Append an image element referencing the scatter plot SVG
                 canvas.append("image")

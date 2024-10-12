@@ -1,1 +1,6 @@
 /.venv
+/my_experiments/node_modules    
+/my_experiments/package-lock.json
+/my_experiments/yarn.lock
+/my_experiments/.env
+/my_experiments/package.json

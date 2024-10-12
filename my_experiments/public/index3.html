@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scatter Plot Grid</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            border: 1px solid #ccc;
+        }
+        image {
+            transition: transform 0.2s;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+        image:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Scatter Plot Grid</h1>
+    <svg width="1000" height="1000"></svg>
+
+    <script>
+        let canvas = d3.select("svg");
+
+        function getScatterPlotURL(index1, index2) {
+            return `/plots_store/scatter_${index1}_${index2}.svg`;
+        }
+
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                if (i === j) continue;
+
+                let x = i * 100;
+                let y = j * 100;
+                let width = 100;
+                let height = 100;
+
+                canvas.append("image")
+                    .attr("x", x)
+                    .attr("y", y)
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("href", getScatterPlotURL(i, j))
+                    .attr("preserveAspectRatio", "xMidYMid meet")
+                    // Store original attributes as data attributes
+                    .attr("data-x", x)
+                    .attr("data-y", y)
+                    .attr("data-width", width)
+                    .attr("data-height", height)
+                    // Event handlers
+                    .on("mouseover", function(event) {
+                        let img = d3.select(this);
+                        let x = +img.attr("data-x");
+                        let y = +img.attr("data-y");
+                        let width = +img.attr("data-width");
+                        let height = +img.attr("data-height");
+
+                        img.transition()
+                            .duration(100)
+                            .attr("x", x - width * 0.05)
+                            .attr("y", y - height * 0.05)
+                            .attr("width", width * 2)
+                            .attr("height", height * 2);
+                    })
+                    .on("mouseout", function(event) {
+                        let img = d3.select(this);
+                        let x = +img.attr("data-x");
+                        let y = +img.attr("data-y");
+                        let width = +img.attr("data-width");
+                        let height = +img.attr("data-height");
+
+                        img.transition()
+                            .duration(100)
+                            .attr("x", x)
+                            .attr("y", y)
+                            .attr("width", width)
+                            .attr("height", height);
+                    });
+            }
+        }
+    </script>
+</body>
+</html>
