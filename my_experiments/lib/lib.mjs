@@ -52,8 +52,8 @@ function createSVG(array, index1, index2) {
 
     // Define dimensions and margins
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
-    const width = 100;
-    const height = 100;
+    const width = 200;
+    const height = 200;
 
     // Create SVG element
     const svg = d3n.createSVG(width, height);
@@ -101,7 +101,7 @@ function createSVG(array, index1, index2) {
     }
 
     // Generate the filename using template literals
-    const filename = `scatter_${index1}_${index2}.svg`;
+    const filename = `scatter_bigger_${index1}_${index2}.svg`;
     const outputPath = path.join(outputDir, filename);
 
     // Save the SVG to a file
