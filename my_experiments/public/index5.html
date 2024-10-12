@@ -23,7 +23,7 @@
 </head>
 <body>
     <h1>Scatter Plot Grid</h1>
-    <svg width="1000" height="1000"></svg>
+    <svg width="1100" height="1100"></svg>
 
     <script>
         let canvas = d3.select("svg");
@@ -32,59 +32,94 @@
             return `/plots_store/scatter_${index1}_${index2}.svg`;
         }
 
+        function getScatterPlotLargeURL(index1, index2) {
+            return `/plots_store/scatter_bigger_${index1}_${index2}.svg`;
+        }
+
+        
         for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-                if (i === j) continue;
+    for (let j = 0; j < 10; j++) {
+        if (i === j) continue;
 
-                let x = i * 100;
-                let y = j * 100;
-                let width = 100;
-                let height = 100;
+        let x = i * 100;
+        let y = j * 100;
+        let width = 100;
+        let height = 100;
 
-                canvas.append("image")
+        canvas.append("image")
+            .attr("x", x)
+            .attr("y", y)
+            .attr("width", width)
+            .attr("height", height)
+            .attr("xlink:href", getScatterPlotURL(i, j))
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            // Store original attributes and indices as data attributes
+            .attr("data-x", x)
+            .attr("data-y", y)
+            .attr("data-width", width)
+            .attr("data-height", height)
+            .attr("data-i", i)
+            .attr("data-j", j)
+            // Event handlers
+            .on("mouseover", function(event) {
+                let img = d3.select(this);
+                let x = +img.attr("data-x");
+                let y = +img.attr("data-y");
+                let i = +img.attr("data-i");
+                let j = +img.attr("data-j");
+
+                let newWidth = 200;
+                let newHeight = 200;
+
+                img.raise();
+
+                // Update data attributes for width and height
+                img.attr("data-width", newWidth)
+                   .attr("data-height", newHeight);
+
+                // Change image source to larger image
+                img.attr("xlink:href", getScatterPlotLargeURL(i, j))
+                   .attr("width", newWidth)
+                   .attr("height", newHeight);
+
+                // Apply transition to enlarge and reposition
+                img.transition()
+                    .duration(100)
+                    .attr("x", x - newWidth * 0.05)
+                    .attr("y", y - newHeight * 0.05)
+                    .attr("width", newWidth * 1.1)
+                    .attr("height", newHeight * 1.1);
+            })
+            .on("mouseout", function(event) {
+                let img = d3.select(this);
+                let x = +img.attr("data-x");
+                let y = +img.attr("data-y");
+                let i = +img.attr("data-i");
+                let j = +img.attr("data-j");
+
+                let originalWidth = 100;
+                let originalHeight = 100;
+
+                // Update data attributes back to original size
+                img.attr("data-width", originalWidth)
+                   .attr("data-height", originalHeight);
+
+                // Change image source back to original
+                img.attr("xlink:href", getScatterPlotURL(i, j))
+                   .attr("width", originalWidth)
+                   .attr("height", originalHeight);
+
+                // Apply transition to shrink back to original size and position
+                img.transition()
+                    .duration(100)
                     .attr("x", x)
                     .attr("y", y)
-                    .attr("width", width)
-                    .attr("height", height)
-                    .attr("href", getScatterPlotURL(i, j))
-                    .attr("preserveAspectRatio", "xMidYMid meet")
-                    // Store original attributes as data attributes
-                    .attr("data-x", x)
-                    .attr("data-y", y)
-                    .attr("data-width", width)
-                    .attr("data-height", height)
-                    // Event handlers
-                    .on("mouseover", function(event) {
-                        let img = d3.select(this);
-                        let x = +img.attr("data-x");
-                        let y = +img.attr("data-y");
-                        let width = +img.attr("data-width");
-                        let height = +img.attr("data-height");
+                    .attr("width", originalWidth)
+                    .attr("height", originalHeight);
+            });
+    }
+}
 
-                        img.transition()
-                            .duration(100)
-                            .attr("x", x - width * 0.05)
-                            .attr("y", y - height * 0.05)
-                            .attr("width", width * 2)
-                            .attr("height", height * 2)
-                            .attr("background-color", white);
-                    })
-                    .on("mouseout", function(event) {
-                        let img = d3.select(this);
-                        let x = +img.attr("data-x");
-                        let y = +img.attr("data-y");
-                        let width = +img.attr("data-width");
-                        let height = +img.attr("data-height");
-
-                        img.transition()
-                            .duration(100)
-                            .attr("x", x)
-                            .attr("y", y)
-                            .attr("width", width)
-                            .attr("height", height);
-                    });
-            }
-        }
     </script>
 </body>
 </html>

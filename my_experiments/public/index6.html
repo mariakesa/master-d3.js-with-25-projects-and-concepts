@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scatter Plot Grid with Hover Effects</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        svg {
+            border: 1px solid #ccc;
+        }
+        .scatter-plot {
+            cursor: pointer;
+        }
+    </style>
+    <!-- Include D3.js library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>Scatter Plot Grid with Hover Effects</h1>
+    <svg width="1000" height="1000"></svg>
+
+    <script>
+        // Select the SVG canvas
+        let canvas = d3.select("svg");
+
+        // Function to get the URL of the scatter plot SVG
+        function getScatterPlotURL(index1, index2) {
+            // Replace with your actual SVG file URLs
+            return `/plots_store/scatter_${index1}_${index2}.svg`;
+        }
+
+        // Loop to create the grid of scatter plots
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                if (i === j) continue;
+
+                let x = i * 100;
+                let y = j * 100;
+                let width = 100;
+                let height = 100;
+
+                // Load the SVG content
+                d3.xml(getScatterPlotURL(i, j)).then(function(data) {
+                    // Get the SVG node from the loaded data
+                    let svgNode = data.documentElement;
+
+                    // Create a group to hold the SVG and for transformations
+                    let g = canvas.append("g")
+                        .attr("transform", `translate(${x},${y})`)
+                        .attr("data-x", x)
+                        .attr("data-y", y)
+                        .attr("data-width", width)
+                        .attr("data-height", height)
+                        .attr("class", "scatter-plot");
+
+                    // Import the loaded SVG node into the current document
+                    let importedNode = document.importNode(svgNode, true);
+
+                    // Append the imported SVG node to the group
+                    g.node().appendChild(importedNode);
+
+                    // Adjust the SVG size
+                    d3.select(importedNode)
+                        .attr("width", width)
+                        .attr("height", height)
+                        .attr("preserveAspectRatio", "xMidYMid meet");
+
+                    // Event handlers
+                    g.on("mouseover", function(event) {
+                        let g = d3.select(this);
+                        let x = +g.attr("data-x");
+                        let y = +g.attr("data-y");
+                        let width = +g.attr("data-width");
+                        let height = +g.attr("data-height");
+
+                        // Change the fill color of internal SVG elements
+                        g.selectAll("*")
+                            .transition()
+                            .duration(100)
+                            .attr("fill", "red");  // Change fill color to red
+
+                        // Enlarge the SVG
+                        g.transition()
+                            .duration(100)
+                            .attr("transform", `translate(${x - width * 0.05},${y - height * 0.05}) scale(1.1)`);
+                    })
+                    .on("mouseout", function(event) {
+                        let g = d3.select(this);
+                        let x = +g.attr("data-x");
+                        let y = +g.attr("data-y");
+                        let width = +g.attr("data-width");
+                        let height = +g.attr("data-height");
+
+                        // Reset the fill color of internal SVG elements
+                        g.selectAll("*")
+                            .transition()
+                            .duration(100)
+                            .attr("fill", null);  // Reset fill color to original
+
+                        // Shrink the SVG back to original size
+                        g.transition()
+                            .duration(100)
+                            .attr("transform", `translate(${x},${y}) scale(1)`);
+                    });
+                }).catch(function(error) {
+                    console.error("Error loading SVG:", error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

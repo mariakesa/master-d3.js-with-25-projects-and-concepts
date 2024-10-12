@@ -24,6 +24,7 @@ async function readNpyFile(filePath) {
 }
 
 /**
+/**
  * Creates and saves an SVG scatter plot based on two column indices.
  * @param {object} array - The parsed NumPy array.
  * @param {number} index1 - The first column index for the X-axis.
@@ -51,37 +52,32 @@ function createSVG(array, index1, index2) {
     const d3n = new D3Node({ d3Module: d3 });
 
     // Define dimensions and margins
-    const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const width = 200;
     const height = 200;
 
     // Create SVG element
     const svg = d3n.createSVG(width, height);
 
-    // Create a group element and apply margins
-    const g = svg.append('g')
-        //.attr('transform', `translate(${margin.left},${margin.top})`);
+    // **Add background rectangle**
+    svg.append('rect')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('fill', 'white');
+
+    // Create a group element
+    const g = svg.append('g');
 
     // Set up scales
     const xExtent = d3.extent(data, d => d.x);
     const yExtent = d3.extent(data, d => d.y);
 
     const xScale = d3.scaleLinear()
-        .domain([xExtent[0], xExtent[1]]).nice()
+        .domain(xExtent).nice()
         .range([0, width]);
 
     const yScale = d3.scaleLinear()
-        .domain([yExtent[0], yExtent[1]]).nice()
+        .domain(yExtent).nice()
         .range([height, 0]);
-
-    // Add X axis
-    //g.append('g')
-        //.attr('transform', `translate(0,${height})`)
-        //.call(d3.axisBottom(xScale));
-
-    // Add Y axis
-    //g.append('g')
-        //.call(d3.axisLeft(yScale));
 
     // Add dots
     g.selectAll('circle')
@@ -112,6 +108,7 @@ function createSVG(array, index1, index2) {
         console.error(`Error writing SVG file ${filename}:`, error);
     }
 }
+
 
 /**
  * The main pipeline function to read the .npy file and generate SVG plots.
